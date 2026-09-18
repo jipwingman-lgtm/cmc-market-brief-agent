@@ -49,6 +49,10 @@ HTML = """<!doctype html>
   <section id="market" class="grid"></section>
   <h2>Watchlist</h2>
   <section id="assets" class="grid"></section>
+  <section id="trending-wrap" style="display:none">
+    <h2>CMC Trending</h2>
+    <section id="trending" class="grid"></section>
+  </section>
 
   <footer>Descriptive monitoring only. No price prediction or trading recommendation.</footer>
 </main>
@@ -102,6 +106,20 @@ async function load() {
       );
     }).join("");
 
+    const trendWrap = document.getElementById("trending-wrap");
+    if (payload.trending && payload.trending.length) {
+      trendWrap.style.display = "block";
+      document.getElementById("trending").innerHTML = payload.trending.map(a =>
+        card(
+          a.symbol + " — " + a.name,
+          '<div class="metric">' + fmtMoney(a.price) + '</div>' +
+          '<div>24h ' + fmtPct(a.percent_change_24h) + '</div>'
+        )
+      ).join("");
+    } else {
+      trendWrap.style.display = "none";
+    }
+
     status.textContent = "Live CMC data loaded.";
   } catch (err) {
     status.className = "error";
@@ -143,7 +161,20 @@ class Handler(BaseHTTPRequestHandler):
                 quotes = client.quotes(symbols)
                 global_metrics = client.global_metrics()
                 fear = client.fear_and_greed()
-                brief = build_brief(quotes, global_metrics, fear)
+
+                trending = None
+                if not client.keyless:
+                    try:
+                        trending = client.trending(limit=5)
+                    except RuntimeError:
+                        trending = None
+
+                brief = build_brief(
+                    quotes,
+                    global_metrics,
+                    fear,
+                    trending_payload=trending,
+                )
                 self._json(200, brief)
             except Exception as exc:
                 self._json(500, {"error": str(exc)})
