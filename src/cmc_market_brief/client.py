@@ -43,8 +43,12 @@ class CMCClient:
             payload = json.loads(response.read().decode("utf-8"))
 
         status = payload.get("status") or {}
-        if status.get("error_code") not in (None, 0):
-            raise RuntimeError(status.get("error_message") or "CoinMarketCap API error")
+        error_code = status.get("error_code")
+        if error_code not in (None, 0, "0"):
+            message = status.get("error_message") or "Unknown API error"
+            raise RuntimeError(
+                f"CoinMarketCap API error {error_code}: {message}"
+            )
         return payload
 
     def quotes(self, symbols: list[str], convert: str = "USD") -> dict[str, Any]:
