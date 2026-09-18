@@ -65,7 +65,24 @@ def main() -> None:
     quotes = client.quotes(symbols, args.convert)
     global_metrics = client.global_metrics(args.convert)
     fear = client.fear_and_greed()
-    brief = build_brief(quotes, global_metrics, fear, args.convert)
+
+    trending = None
+    startup_note = None
+    if not client.keyless:
+        try:
+            trending = client.trending(limit=5, convert=args.convert)
+        except RuntimeError as exc:
+            startup_note = str(exc)
+
+    brief = build_brief(
+        quotes,
+        global_metrics,
+        fear,
+        args.convert,
+        trending_payload=trending,
+    )
+    if startup_note:
+        brief["startup_note"] = startup_note
 
     if args.evidence:
         evidence = _evidence(symbols, quotes, global_metrics, fear, brief)
