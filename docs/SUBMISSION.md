@@ -13,6 +13,7 @@ Track: **Markets and Trading Tools**
 - [x] Automated unit tests
 - [x] Live API smoke workflow
 - [ ] Public repository
+- [x] Local browser demo
 - [ ] Demo video or deployed demo
 - [ ] DoraHacks submission
 - [ ] X post with #BuildwithCMC
@@ -22,8 +23,9 @@ Track: **Markets and Trading Tools**
 - GET /v3/cryptocurrency/quotes/latest
 - GET /v1/global-metrics/quotes/latest
 - GET /v3/fear-and-greed/latest
+- GET /v1/cryptocurrency/trending/latest (Startup tier and above)
 
-The live smoke workflow calls their keyless /public-api equivalents.
+The live smoke workflow calls the keyless /public-api equivalents of the first three endpoints. Trending is activated automatically when CMC_API_KEY is configured.
 
 ## What CMC made possible
 
