@@ -1,5 +1,6 @@
 from cmc_market_brief.analysis import build_brief, extract_trending, format_markdown
 from cmc_market_brief.client import CMCClient
+from cmc_market_brief.web import HTML
 
 
 def _payloads():
@@ -152,3 +153,8 @@ def test_extract_trending():
             "percent_change_24h": 7.25,
         }
     ]
+
+
+def test_web_demo_html_loads():
+    assert "CMC Market Brief Agent" in HTML
+    assert "Refresh live data" in HTML
