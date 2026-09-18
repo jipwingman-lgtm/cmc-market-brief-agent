@@ -75,7 +75,7 @@ function card(title, body) {
 }
 
 async function load() {
-  const symbols = document.getElementById("symbols").value.trim() || "BTC,ETH,SOL";
+  const symbols = "BTC,ETH,SOL";
   const status = document.getElementById("status");
   status.className = "";
   status.textContent = "Calling CoinMarketCap…";
