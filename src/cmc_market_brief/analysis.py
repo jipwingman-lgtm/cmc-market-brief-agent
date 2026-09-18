@@ -95,11 +95,39 @@ def _asset_signals(asset: dict[str, Any], convert: str) -> dict[str, Any]:
     }
 
 
+def extract_trending(
+    payload: dict[str, Any] | None,
+    convert: str = "USD",
+    limit: int = 5,
+) -> list[dict[str, Any]]:
+    if not payload:
+        return []
+
+    items = payload.get("data") or []
+    if isinstance(items, dict):
+        items = list(items.values())
+
+    result = []
+    for asset in items[:limit]:
+        quote = _quote_for(asset, convert)
+        result.append(
+            {
+                "name": asset.get("name"),
+                "symbol": asset.get("symbol"),
+                "rank": asset.get("cmc_rank"),
+                "price": _num(quote.get("price")),
+                "percent_change_24h": _num(quote.get("percent_change_24h")),
+            }
+        )
+    return result
+
+
 def build_brief(
     quotes_payload: dict[str, Any],
     global_payload: dict[str, Any],
     fear_payload: dict[str, Any],
     convert: str = "USD",
+    trending_payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     assets_raw = quotes_payload.get("data") or []
     if isinstance(assets_raw, dict):
@@ -128,6 +156,8 @@ def build_brief(
     else:
         headline = "No 24h price-change data is available for the requested assets."
 
+    trending = extract_trending(trending_payload, convert)
+
     return {
         "headline": headline,
         "watchlist": [asset["symbol"] for asset in assets],
@@ -146,6 +176,7 @@ def build_brief(
             ),
         },
         "assets": assets,
+        "trending": trending,
         "methodology": {
             "notable_24h_move": "absolute 24h change >= 5%",
             "large_24h_move": "absolute 24h change >= 10%",
@@ -215,6 +246,15 @@ def format_markdown(brief: dict[str, Any]) -> str:
                 "",
             ]
         )
+
+    if brief.get("trending"):
+        lines.extend(["## CMC trending", ""])
+        for item in brief["trending"]:
+            lines.append(
+                f"- {item['symbol']} — {item['name']}: "
+                f"{_money(item['price'])}, 24h {_pct(item['percent_change_24h'])}"
+            )
+        lines.append("")
 
     lines.extend(["---", brief["disclaimer"]])
     return "\n".join(lines)
