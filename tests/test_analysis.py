@@ -1,4 +1,4 @@
-from cmc_market_brief.analysis import build_brief, format_markdown
+from cmc_market_brief.analysis import build_brief, extract_trending, format_markdown
 from cmc_market_brief.client import CMCClient
 
 
@@ -123,3 +123,32 @@ def test_duplicate_symbols_choose_highest_rank():
 
     assert len(btc_assets) == 1
     assert btc_assets[0]["name"] == "Bitcoin"
+
+
+def test_extract_trending():
+    payload = {
+        "data": [
+            {
+                "name": "Example Coin",
+                "symbol": "EXM",
+                "cmc_rank": 42,
+                "quote": {
+                    "USD": {
+                        "price": 12.5,
+                        "percent_change_24h": 7.25,
+                    }
+                },
+            }
+        ]
+    }
+
+    result = extract_trending(payload)
+    assert result == [
+        {
+            "name": "Example Coin",
+            "symbol": "EXM",
+            "rank": 42,
+            "price": 12.5,
+            "percent_change_24h": 7.25,
+        }
+    ]
