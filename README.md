@@ -43,6 +43,8 @@ Without CMC_API_KEY, the client automatically uses the matching keyless public p
 
 The response structure stays compatible, so moving from the public demo to a keyed plan does not require a parser rewrite.
 
+Ticker symbols are not globally unique. When CMC returns multiple assets with the same symbol, the app keeps the highest-ranked CoinMarketCap asset for that symbol. CMC IDs remain the safest identifier for future production expansion.
+
 ## Install
 
 Requirements:
@@ -78,6 +80,18 @@ To save hackathon-safe API evidence:
     cmc-brief BTC ETH SOL --evidence live-evidence.json
 
 The evidence file contains market data, endpoint names, and API response timestamps. It never includes an API key.
+
+## Local web demo
+
+For a browser-friendly hackathon demo:
+
+    cmc-brief-web
+
+Then open:
+
+    http://127.0.0.1:8000
+
+The page calls the local Python backend, which fetches live CMC data and renders market context plus anomaly flags. An API key, when configured, stays on the server side and is never sent to the browser.
 
 ## Run with a CoinMarketCap API key
 
@@ -117,6 +131,12 @@ It makes real keyless requests to CoinMarketCap for BTC, ETH, and SOL, prints th
 
 This provides visible evidence that the project is making real CMC API calls without putting a private API key into the repository.
 
+A verified snapshot from a successful workflow run is committed at:
+
+    docs/live-api-evidence.json
+
+That snapshot records the CMC response timestamps, selected market metrics, and the canonical BTC/ETH/SOL results from the live call.
+
 ## Tests
 
 Install development dependencies and run:
@@ -131,8 +151,10 @@ Unit tests use synthetic market data and do not spend API credits.
     src/cmc_market_brief/client.py     CoinMarketCap HTTP client
     src/cmc_market_brief/analysis.py   transparent anomaly detection
     src/cmc_market_brief/cli.py        command-line interface
+    src/cmc_market_brief/web.py        local browser demo
     scripts/live_smoke.py              real public-API smoke test
     tests/test_analysis.py             offline unit tests
+    docs/live-api-evidence.json        verified public market-data snapshot
     docs/SUBMISSION.md                 hackathon checklist
 
 ## Hackathon status
@@ -145,6 +167,8 @@ Unit tests use synthetic market data and do not spend API credits.
 - [x] CLI output in Markdown and JSON
 - [x] Unit tests
 - [x] Live API smoke workflow
+- [x] Local browser demo
+- [x] Verified live API evidence snapshot
 - [ ] Public repository
 - [ ] Demo video
 - [ ] DoraHacks submission
@@ -157,7 +181,6 @@ Unit tests use synthetic market data and do not spend API credits.
 - watchlist presets
 - scheduled alert mode
 - optional Startup-tier signals
-- small web dashboard
 - exportable demo snapshots
 
 ## License
