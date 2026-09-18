@@ -21,11 +21,12 @@ The output is descriptive monitoring only. It does not predict prices or recomme
 
 ## Why CoinMarketCap
 
-The project combines three CMC data surfaces in one small workflow:
+The project combines several CMC data surfaces in one small workflow:
 
 1. **Cryptocurrency quotes** for asset-level prices, market caps, volume, and price changes.
 2. **Global metrics** for whole-market context and dominance.
 3. **CMC Fear & Greed** for a proprietary market-sentiment signal.
+4. **CMC Trending** when a Startup-or-higher API key is configured.
 
 This gives a user both the watchlist and the market backdrop in one command.
 
@@ -36,6 +37,7 @@ Keyed Pro API paths:
     GET /v3/cryptocurrency/quotes/latest
     GET /v1/global-metrics/quotes/latest
     GET /v3/fear-and-greed/latest
+    GET /v1/cryptocurrency/trending/latest   # Startup tier and above
 
 Without CMC_API_KEY, the client automatically uses the matching keyless public paths under:
 
@@ -103,7 +105,7 @@ Then run the same command:
 
     cmc-brief BTC ETH SOL
 
-The client automatically switches from the keyless public path to the standard Pro API path.
+The client automatically switches from the keyless public path to the standard Pro API path. With a Startup-or-higher key it also requests CMC Trending and includes the top trending assets in CLI and web-demo output.
 
 Never commit the key. See SECURITY.md.
 
@@ -169,6 +171,7 @@ Unit tests use synthetic market data and do not spend API credits.
 - [x] Live API smoke workflow
 - [x] Local browser demo
 - [x] Verified live API evidence snapshot
+- [x] Startup-tier trending integration
 - [ ] Public repository
 - [ ] Demo video
 - [ ] DoraHacks submission
@@ -180,7 +183,7 @@ Unit tests use synthetic market data and do not spend API credits.
 - historical baselines
 - watchlist presets
 - scheduled alert mode
-- optional Startup-tier signals
+- historical alert baselines
 - exportable demo snapshots
 
 ## License
