@@ -22,6 +22,32 @@ def _num(value: Any) -> float | None:
         return None
 
 
+def _canonical_assets(assets: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Choose the highest-ranked CMC asset for each ticker symbol."""
+    selected: dict[str, dict[str, Any]] = {}
+
+    for asset in assets:
+        symbol = str(asset.get("symbol", "")).upper()
+        if not symbol:
+            continue
+
+        current = selected.get(symbol)
+        rank = asset.get("cmc_rank")
+        current_rank = current.get("cmc_rank") if current else None
+
+        rank_key = rank if isinstance(rank, int) and rank > 0 else float("inf")
+        current_key = (
+            current_rank
+            if isinstance(current_rank, int) and current_rank > 0
+            else float("inf")
+        )
+
+        if current is None or rank_key < current_key:
+            selected[symbol] = asset
+
+    return list(selected.values())
+
+
 def _asset_signals(asset: dict[str, Any], convert: str) -> dict[str, Any]:
     quote = _quote_for(asset, convert)
     change_1h = _num(quote.get("percent_change_1h"))
@@ -79,6 +105,7 @@ def build_brief(
     if isinstance(assets_raw, dict):
         assets_raw = list(assets_raw.values())
 
+    assets_raw = _canonical_assets(assets_raw)
     assets = [_asset_signals(asset, convert) for asset in assets_raw]
     assets.sort(
         key=lambda item: abs(item["percent_change_24h"] or 0),
