@@ -1,0 +1,49 @@
+{
+  "source": "CoinMarketCap keyless public API",
+  "captured_from_github_actions_run": 35308486107,
+  "captured_at": "2026-09-18T04:50:32Z",
+  "requested_symbols": ["BTC", "ETH", "SOL"],
+  "endpoints": [
+    "/public-api/v3/cryptocurrency/quotes/latest",
+    "/public-api/v1/global-metrics/quotes/latest",
+    "/public-api/v3/fear-and-greed/latest"
+  ],
+  "status_timestamps": {
+    "quotes": "2026-09-18T04:50:32.281Z",
+    "global_metrics": "2026-09-18T04:50:32.338Z",
+    "fear_and_greed": "2026-09-18T04:50:32.392Z"
+  },
+  "market": {
+    "total_market_cap": 2655759398919.6704,
+    "total_volume_24h": 76467075149.83,
+    "btc_dominance": 58.478875935979,
+    "eth_dominance": 11.372689314306,
+    "fear_greed_value": 65,
+    "fear_greed_classification": "Greed"
+  },
+  "assets": [
+    {
+      "name": "Solana",
+      "symbol": "SOL",
+      "cmc_rank": 7,
+      "price_usd": 105.04563513604056,
+      "percent_change_24h": 5.60383136,
+      "flag": "notable_24h_move"
+    },
+    {
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "cmc_rank": 2,
+      "price_usd": 2475.1713191007766,
+      "percent_change_24h": 1.71618115
+    },
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "cmc_rank": 1,
+      "price_usd": 77339.43003872872,
+      "percent_change_24h": 1.35876895
+    }
+  ],
+  "note": "Public market-data snapshot captured by the repository's live smoke workflow. No API key was used or stored."
+}
