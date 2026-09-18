@@ -96,3 +96,30 @@ def test_client_uses_pro_endpoint_with_key():
     client = CMCClient(api_key="synthetic-test-key")
     url = client._url_for("/v3/cryptocurrency/quotes/latest")
     assert "/public-api/" not in url
+
+
+def test_duplicate_symbols_choose_highest_rank():
+    quotes, global_metrics, fear = _payloads()
+    quotes["data"].append(
+        {
+            "id": 999999,
+            "name": "Unrelated BTC ticker",
+            "symbol": "BTC",
+            "cmc_rank": 3500,
+            "quote": [
+                {
+                    "symbol": "USD",
+                    "price": 0.01,
+                    "percent_change_24h": -80,
+                    "market_cap": 10000,
+                    "volume_24h": 100,
+                }
+            ],
+        }
+    )
+
+    brief = build_brief(quotes, global_metrics, fear)
+    btc_assets = [item for item in brief["assets"] if item["symbol"] == "BTC"]
+
+    assert len(btc_assets) == 1
+    assert btc_assets[0]["name"] == "Bitcoin"
