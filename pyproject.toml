@@ -15,6 +15,7 @@ dev = ["pytest>=8.0"]
 
 [project.scripts]
 cmc-brief = "cmc_market_brief.cli:main"
+cmc-brief-web = "cmc_market_brief.web:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
