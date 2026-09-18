@@ -1,0 +1,27 @@
+name: live-cmc-smoke
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/live_smoke.py"
+      - "src/cmc_market_brief/**"
+      - "pyproject.toml"
+      - ".github/workflows/live-smoke.yml"
+
+jobs:
+  live-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Call CoinMarketCap keyless public API
+        run: python scripts/live_smoke.py
+      - name: Upload API evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-cmc-evidence
+          path: live-evidence.json
